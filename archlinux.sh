@@ -121,7 +121,7 @@ sleep $delay
 
 
 # chrooting into arch.
-arch-chroot /mnt /bin/bash << 'EOF'
+arch-chroot /mnt /bin/bash << EOF
 
 # Time and locale 
 timedatectl set-timezone Asia/Kolkata
