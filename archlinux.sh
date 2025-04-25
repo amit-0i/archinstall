@@ -1,7 +1,13 @@
 #!/bin/bash
 
-delay = 0.5
+set -e
+delay=0.5
 
+
+read -s -p "Enter root password: " rootpass
+echo
+read -s -p "Enter password for user okkotsu: " userpass
+echo
 
 
 # Check if the script is run as root
@@ -139,10 +145,6 @@ sleep $delay
 
 
 # Users and root
-read -s -p "Enter root password: " rootpass
-echo
-read -s -p "Enter password for user okkotsu: " userpass
-echo
 
 echo "Setting root password..."
 echo "root:$rootpass" | chpasswd
@@ -151,11 +153,9 @@ echo "Creating user 'okkotsu'..."
 useradd -m -G wheel -s /bin/bash okkotsu
 echo "okkotsu:$userpass" | chpasswd
 
-# Enable sudo for wheel group
-sed -i '/^# %wheel  ALL=(ALL)       ALL/s/^# //' /etc/sudoers
-
-echo "User added"
-sleep $delay
+# Uncomment %wheel in sudoers
+echo "Configuring sudo for wheel group..."
+EDITOR='sed -i "s/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/"' visudo
 
 
 # GRUB installation
