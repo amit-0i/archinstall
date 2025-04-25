@@ -57,3 +57,6 @@ else
     mkfs.ext4 "${DISK}2"
 fi
 
+# Ranking mirrors
+reflector --country India --protocol https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
+
