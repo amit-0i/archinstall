@@ -22,7 +22,7 @@ setfont ter-122b
 
 # Checking available disks.
 echo "=== Disks and Partitions ==="
-lsblk -o NAME, SIZE, TYPE, MOUNTPOINT
+lsblk
 
 
 # Choose a disk to install Arch linux on.
