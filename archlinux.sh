@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-delay=0.5
+delay=1
 
 
 read -s -p "Enter root password: " rootpass
