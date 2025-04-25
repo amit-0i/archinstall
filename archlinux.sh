@@ -139,13 +139,24 @@ sleep $delay
 
 
 # Users and root
-echo "Please enter password for root user."
-passwd
-sed -i '/^# %wheel  ALL=(ALL)       ALL/s/^# //' /etc/sudoers
+read -s -p "Enter root password: " rootpass
+echo
+read -s -p "Enter password for user okkotsu: " userpass
+echo
+
+echo "Setting root password..."
+echo "root:$rootpass" | chpasswd
+
+echo "Creating user 'okkotsu'..."
 useradd -m -G wheel -s /bin/bash okkotsu
-passwd okkotsu
+echo "okkotsu:$userpass" | chpasswd
+
+# Enable sudo for wheel group
+sed -i '/^# %wheel  ALL=(ALL)       ALL/s/^# //' /etc/sudoers
+
 echo "User added"
 sleep $delay
+
 
 # GRUB installation
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=grub --removable --recheck
