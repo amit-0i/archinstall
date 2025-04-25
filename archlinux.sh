@@ -29,3 +29,11 @@ else
     exit 1
 fi
 
+# Partitioning disk.
+echo "Partitioning the disk $DISK..."
+parted "$DISK" mklabel gpt
+parted "$DISK" mkpart primary fat32 1MiB 513MiB
+parted "$DISK" set 1 esp on
+parted "$DISK" name 1 BOOT
+parted "$DISK" mkpart primary ext4 513MiB 100%
+parted "$DISK" name 2 ROOT
