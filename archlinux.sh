@@ -95,4 +95,32 @@ hwclock --systohc
 sed -i '/en_US.UTF-8/s/^#//g' "/etc/locale.gen"
 locale-gen
 
-echo "LANG=en_US.UTF-8" >> /etc/locale.conf
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+
+
+# Network Manager
+echo "void" > /etc/hostname
+systemctl enable NetworkManager
+
+
+# Users and root
+echo "Please enter password for root user."
+passwd
+sed -i '/^# %wheel  ALL=(ALL)       ALL/s/^# //' /etc/sudoers
+useradd -m -G wheel -s /bin/bash okkotsu
+passwd okkotsu
+
+
+# GRUB installation
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=grub --removable --reheck
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=grub --reheck
+
+sed -i '/#GRUB_DISABLE_OS_PROBER/s/^#//' "/etc/default/grub"
+
+grub-mkconfig -o /boot/grub/grub.cfg
+
+EOF
+
+umount -R /mnt
+
+echo "[✔] Installation complete. You can now reboot your system."
