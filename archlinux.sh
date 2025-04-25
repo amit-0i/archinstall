@@ -60,3 +60,8 @@ fi
 # Ranking mirrors
 reflector --country India --protocol https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
 
+# Installing packages
+pacstrap -K /mnt base base-devel linux-zen linux-firmware intel-ucode dosfstools e2fsprogs ntfs-3g xfsprogs btrfs-progs efibootmgr grub os-prober networkmanager sudo vim nano man-pages man-db texinfo tealdeer git
+
+# Generate fstab file.
+genfstab -U /mnt >> /mnt/etc/fstab
