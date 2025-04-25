@@ -57,6 +57,19 @@ else
     mkfs.ext4 "${DISK}2"
 fi
 
+# Mounting partitions
+if [[ "$DISK" =~ ^/dev/nvme ]]; then
+    # If disk is NVMe
+    mount "${DISK}p2" /mnt
+    mkdir -p /mnt/boot/efi
+    mount "${DISK}p1" /mnt/boot/efi
+else
+    # If disk is SATA (e.g., /dev/sda)
+    mount "${DISK}2" /mnt
+    mkdir -p /mnt/boot/efi
+    mount "${DISK}1" /mnt/boot/efi
+fi
+
 # Ranking mirrors
 reflector --country India --protocol https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
 
