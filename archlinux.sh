@@ -1,10 +1,12 @@
 #!/bin/bash
 
+
 # Check if the script is run as root
 if [ "$EUID" -ne 0 ]; then
     echo "Please run as root."
     exit 1
 fi
+
 
 # Check if the system is booted in UEFI mode.
 if [ ! -d "/sys/firmware/efi" ]; then
@@ -12,9 +14,11 @@ if [ ! -d "/sys/firmware/efi" ]; then
     exit 1
 fi
 
+
 # Checking available disks.
 echo "=== Disks and Partitions ==="
 lsblk -o NAME, SIZE, TYPE, MOUNTPOINT
+
 
 # Choose a disk to install Arch linux on.
 read -p "Select disk to install Arch linux on (ex:- /dev/sda or /dev/nvme0n1):- " disk_selected
@@ -29,6 +33,7 @@ else
     exit 1
 fi
 
+
 # Partitioning disk.
 echo "Partitioning the disk $DISK..."
 parted "$DISK" mklabel gpt
@@ -37,3 +42,18 @@ parted "$DISK" set 1 esp on
 parted "$DISK" name 1 BOOT
 parted "$DISK" mkpart primary ext4 513MiB 100%
 parted "$DISK" name 2 ROOT
+
+
+# Formatting partitions
+echo "Formatting partitions"
+
+if [[ "$DISK" =~ ^/dev/nvme ]]; then
+    # If disk is NVMe
+    mkfs.fat -F 32 "${DISK}p1"
+    mkfs.ext4 "${DISK}p2"
+else
+    # If disk is SATA (e.g., /dev/sda)
+    mkfs.fat -F 32 "${DISK}1"
+    mkfs.ext4 "${DISK}2"
+fi
+
