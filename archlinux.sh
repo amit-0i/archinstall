@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-delay=1
+delay=2
 
 
 read -s -p "Enter root password: " rootpass
@@ -40,7 +40,7 @@ echo "Note everything on $DISK will be wiped out!"
 if [ -b "$DISK" ]; then
     echo "Disk exists and is valid."
 else
-    echo "Error: Disk $selected_disk does not exist!"
+    echo "Error: Disk $disk_selected does not exist!"
     exit 1
 fi
 sleep $delay
