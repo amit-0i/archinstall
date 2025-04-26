@@ -174,4 +174,4 @@ EOF
 
 umount -R /mnt
 
-echo "[✔] Installation complete. You can now reboot your system."
+echo "Installation complete. You can now reboot your system."
