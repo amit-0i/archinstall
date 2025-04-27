@@ -100,8 +100,8 @@ echo "Formatting partitions"
 if [[ "$DISK" =~ ^/dev/nvme ]]; then
     # If disk is NVMe
     mkfs.fat -F 32 "${DISK}p1"
-    mkfs.btrfs "${DISK}p2"
-    mkfs.xfs "${DISK}p3"
+    mkfs.btrfs -f "${DISK}p2"
+    mkfs.xfs -f "${DISK}p3"
 else
     # If disk is SATA (e.g., /dev/sda)
     mkfs.fat -F 32 "${DISK}1"
