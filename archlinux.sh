@@ -129,7 +129,7 @@ for part in /dev/nvme0n1p1 /dev/sda1 /dev/sda2 /dev/nvme0n1p2 /dev/sdb1; do
     if [ -b "$part" ] && blkid -t TYPE="vfat" "$part" >/dev/null; then
         WINDOWS_EFI="$part"
         echo "Found Windows EFI partition at $WINDOWS_EFI"
-        read -p "Do you want to mount it? y/n" mnt_ans
+        read -p "Do you want to mount it? y/n : " mnt_ans
         if [[ $mnt_ans =~ ^[yY]$ ]]; then
             mkdir -p /mnt/boot/windows-efi
             mount "$WINDOWS_EFI" /mnt/boot/windows-efi
