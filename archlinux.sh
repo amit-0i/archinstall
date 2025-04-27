@@ -52,12 +52,44 @@ sleep $delay
 
 # Partitioning disk.
 echo "Partitioning the disk $DISK..."
-parted "$DISK" mklabel gpt
-parted "$DISK" mkpart primary fat32 1MiB 513MiB
-parted "$DISK" set 1 esp on
-parted "$DISK" name 1 BOOT
-parted "$DISK" mkpart primary ext4 513MiB 100%
-parted "$DISK" name 2 ROOT
+
+read -p "1. Only root $"\n" 
+    2. Root and Home $"\n" 
+    3. Root, Home and Swap. $"\n" 
+    Choose partition layout 1, 2 or 3" part_ans
+echo
+
+if [ $part_ans -eq 1 ]; then
+    parted "$DISK" mklabel gpt
+    parted "$DISK" mkpart primary fat32 1MiB 513MiB
+    parted "$DISK" set 1 esp on
+    parted "$DISK" name 1 BOOT
+    parted "$DISK" mkpart primary ext4 513MiB 100%
+    parted "$DISK" name 2 ROOT
+elif [ $part_ans -eq 2 ]; then
+    parted "$DISK" mklabel gpt
+    parted "$DISK" mkpart primary fat32 1MiB 513MiB
+    parted "$DISK" set 1 esp on
+    parted "$DISK" name 1 BOOT
+    parted "$DISK" mkpart primary ext4 513MiB 50.5GiB
+    parted "$DISK" name 2 ROOT
+    parted "$DISK" mkpart primary ext4 50.5GiB 100%
+    parted "$DISK" name 3 HOME
+elif [ $part_ans -eq 3 ]; then
+    parted "$DISK" mklabel gpt
+    parted "$DISK" mkpart primary fat32 1MiB 513MiB
+    parted "$DISK" set 1 esp on
+    parted "$DISK" name 1 BOOT
+    parted "$DISK" mkpart primary linux-swap 513MiB 8.5GiB
+    parted "$DISK" name 2 SWAP
+    parted "$DISK" mkpart primary ext4 8.5GiB 58.5GiB
+    parted "$DISK" name 3 ROOT
+    parted "$DISK" mkpart primary ext4 58.5GiB 100%
+    parted "$DISK" name 4 HOME
+else
+    echo "invalid option chosen"
+    exit 1
+fi
 
 echo "Partitioning completed"
 sleep $delay
