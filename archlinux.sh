@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-delay=2
 
 
 read -p "Enter username for the user account: " username
@@ -47,16 +46,16 @@ else
     echo "Error: Disk $disk_selected does not exist!"
     exit 1
 fi
-sleep $delay
+sleep 2
 
 
 # Partitioning disk.
 echo "Partitioning the disk $DISK..."
 
-read -p "1. Only root $"\n" 
-    2. Root and Home $"\n" 
-    3. Root, Home and Swap. $"\n" 
-    Choose partition layout 1, 2 or 3" part_ans
+read -p "1. Only root '\'
+    2. Root and Home '\' 
+    3. Root, Home and Swap. '\'
+    Choose partition layout 1, 2 or 3 :- " part_ans
 echo
 
 if [ $part_ans -eq 1 ]; then
@@ -92,7 +91,7 @@ else
 fi
 
 echo "Partitioning completed"
-sleep $delay
+sleep 2
 
 
 # Formatting partitions
@@ -108,7 +107,7 @@ else
     mkfs.ext4 "${DISK}2"
 fi
 echo "Disks formated"
-sleep $delay
+sleep 2
 
 
 # Mounting partitions
@@ -140,13 +139,13 @@ for part in /dev/nvme0n1p1 /dev/sda1 /dev/sda2 /dev/nvme0n1p2 /dev/sdb1; do
 done
 
 echo "Partitions mounted"
-sleep $delay
+sleep 2
 
 
 # Ranking mirrors
 reflector --country India --protocol https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
 echo "Mirrors selected"
-sleep $delay
+sleep 2
 
 
 # Installing packages
@@ -156,7 +155,7 @@ pacstrap -K /mnt base base-devel linux-zen linux-firmware intel-ucode dosfstools
 # Generate fstab file.
 genfstab -U /mnt >> /mnt/etc/fstab
 echo "fstab file generated"
-sleep $delay
+sleep 2
 
 
 # chrooting into arch.
@@ -173,14 +172,14 @@ locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
 echo "Time and Locale configured"
-sleep $delay
+sleep 2
 
 
 # Network Manager
 echo "$hostname" > /etc/hostname
 systemctl enable NetworkManager
 echo "Network manager configured"
-sleep $delay
+sleep 2
 
 
 # Users and root
@@ -207,7 +206,7 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 echo "Grub configured"
 echo "Exiting chroot..."
-sleep $delay
+sleep 2
 
 EOF
 
