@@ -4,6 +4,10 @@ set -e
 delay=2
 
 
+read -p "Enter username for the user account: " username
+echo
+read -p "Enter hostname for the system: " hostname
+echo
 read -s -p "Enter root password: " rootpass
 echo
 read -s -p "Enter password for user okkotsu: " userpass
@@ -94,8 +98,11 @@ for part in /dev/nvme0n1p1 /dev/sda1 /dev/sda2 /dev/nvme0n1p2 /dev/sdb1; do
     if [ -b "$part" ] && blkid -t TYPE="vfat" "$part" >/dev/null; then
         WINDOWS_EFI="$part"
         echo "Found Windows EFI partition at $WINDOWS_EFI"
-        mkdir -p /mnt/boot/windows-efi
-        mount "$WINDOWS_EFI" /mnt/boot/windows-efi
+        read -p "Do you want to mount it? y/n" mnt_ans
+        if [[ $mnt_ans =~ ^[yY]$ ]]; then
+            mkdir -p /mnt/boot/windows-efi
+            mount "$WINDOWS_EFI" /mnt/boot/windows-efi
+        fi
         break
     fi
 done
@@ -138,7 +145,7 @@ sleep $delay
 
 
 # Network Manager
-echo "void" > /etc/hostname
+echo "$hostname" > /etc/hostname
 systemctl enable NetworkManager
 echo "Network manager configured"
 sleep $delay
@@ -151,7 +158,7 @@ echo "root:$rootpass" | chpasswd
 
 echo "Creating user 'okkotsu'..."
 useradd -m -G wheel -s /bin/bash okkotsu
-echo "okkotsu:$userpass" | chpasswd
+echo "$username:$userpass" | chpasswd
 
 # Uncomment %wheel in sudoers
 echo "Configuring sudo for wheel group..."
