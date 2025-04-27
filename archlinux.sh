@@ -187,8 +187,8 @@ sleep 2
 echo "Setting root password..."
 echo "root:$rootpass" | chpasswd
 
-echo "Creating user 'okkotsu'..."
-useradd -m -G wheel -s /bin/bash okkotsu
+echo "Creating user '$username'..."
+useradd -m -G wheel -s /bin/bash $username
 echo "$username:$userpass" | chpasswd
 
 # Uncomment %wheel in sudoers
