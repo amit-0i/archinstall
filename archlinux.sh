@@ -30,14 +30,16 @@ setfont ter-132b
 
 
 # Checking available disks.
-echo "=== Disks and Partitions ==="
+echo "===================================="
+echo "|       Disks and Partitions       |"
+echo "===================================="
 lsblk
 
 
 # Choose a disk to install Arch linux on.
 read -p "Select disk to install Arch linux on (ex:- /dev/sda or /dev/nvme0n1):- " disk_selected
 DISK="/dev/$disk_selected"
-echo "You selected: $DISK"
+echo "You have selected: $DISK"
 echo "Note everything on $DISK will be wiped out!"
 
 if [ -b "$DISK" ]; then
@@ -53,9 +55,9 @@ sleep 2
 echo "Partitioning the disk $DISK..."
 
 read -p "1. Only root '\'
-    2. Root and Home '\' 
-    3. Root, Home and Swap. '\'
-    Choose partition layout 1, 2 or 3 :- " part_ans
+2. Root and Home '\' 
+3. Root, Home and Swap. '\'
+Choose partition layout 1, 2 or 3 :- " part_ans
 echo
 
 if [ $part_ans -eq 1 ]; then
@@ -146,7 +148,7 @@ sleep 2
 
 
 # Ranking mirrors
-reflector --country India --protocol https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
+reflector --country India --protocol https --latest 20 --sort rate --save /etc/pacman.d/mirrorlist
 echo "Mirrors selected"
 sleep 2
 
@@ -166,6 +168,8 @@ arch-chroot /mnt /bin/bash << EOF
 
 # Time and locale 
 timedatectl set-timezone Asia/Kolkata
+timedatectl set-ntp 1
+timedatectl set-local-rtc 1
 ln -sf /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
 hwclock --systohc
 
@@ -211,6 +215,9 @@ echo "Grub configured"
 echo "Exiting chroot..."
 sleep 2
 
+
+# Updating tealdeer
+tldr --update
 EOF
 
 umount -R /mnt
