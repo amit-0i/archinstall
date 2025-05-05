@@ -9,7 +9,7 @@ read -p "Enter hostname for the system: " hostname
 echo
 read -s -p "Enter root password: " rootpass
 echo
-read -s -p "Enter password for user okkotsu: " userpass
+read -s -p "Enter password for user $username: " userpass
 echo
 
 
