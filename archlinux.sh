@@ -55,8 +55,8 @@ sleep 2
 echo "Partitioning the disk $DISK..."
 
 read -p "1. Only root '\'
-2. Root and Home '\' 
-3. Root, Home and Swap. '\'
+2. Root and Home (50GiB for root, rest for home )'\' 
+3. Root, Swap and Home. (50GiB for root, 8GiB for swap, rest for home )'\'
 Choose partition layout 1, 2 or 3 :- " part_ans
 echo
 
