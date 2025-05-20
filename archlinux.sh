@@ -37,7 +37,7 @@ lsblk
 
 
 # Choose a disk to install Arch linux on.
-read -p "Select disk to install Arch linux on (ex:- /dev/sda or /dev/nvme0n1):- " disk_selected
+read -p "Select disk to install Arch linux on (ex:- sda or nvme0n1):- " disk_selected
 DISK="/dev/$disk_selected"
 echo "You have selected: $DISK"
 echo "Note everything on $DISK will be wiped out!"
