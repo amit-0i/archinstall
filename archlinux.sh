@@ -2,17 +2,6 @@
 
 set -e
 
-
-read -p "Enter username for the user account: " username
-echo
-read -p "Enter hostname for the system: " hostname
-echo
-read -s -p "Enter root password: " rootpass
-echo
-read -s -p "Enter password for user $username: " userpass
-echo
-
-
 # Check if the script is run as root
 if [ "$EUID" -ne 0 ]; then
     echo "Please run as root."
@@ -223,6 +212,15 @@ genfstab -U /mnt >> /mnt/etc/fstab
 echo "fstab file generated"
 sleep 2
 
+# Ask for username and password
+read -p "Enter username for the user account: " username
+echo
+read -p "Enter hostname for the system: " hostname
+echo
+read -s -p "Enter root password: " rootpass
+echo
+read -s -p "Enter password for user $username: " userpass
+echo
 
 # chrooting into arch.
 arch-chroot /mnt /bin/bash << EOF
