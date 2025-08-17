@@ -37,10 +37,9 @@ lsblk
 
 
 # Choose a disk to install Arch linux on.
-read -p "Select disk to install Arch linux on (ex:- sda or nvme0n1):- " disk_selected
+read -p "Select disk to install Arch linux on (e.g.:- sda or nvme0n1):- " disk_selected
 DISK="/dev/$disk_selected"
 echo "You have selected: $DISK"
-echo "Note everything on $DISK will be wiped out!"
 
 if [ -b "$DISK" ]; then
     echo "Disk exists and is valid."
@@ -48,6 +47,8 @@ else
     echo "Error: Disk $disk_selected does not exist!"
     exit 1
 fi
+
+echo "Note everything on $DISK will be wiped out!"
 sleep 2
 
 
@@ -62,30 +63,30 @@ echo
 
 if [ $part_ans -eq 1 ]; then
     parted "$DISK" mklabel gpt
-    parted "$DISK" mkpart primary fat32 1MiB 513MiB
+    parted "$DISK" mkpart primary fat32 1MiB 1025MiB
     parted "$DISK" set 1 esp on
     parted "$DISK" name 1 BOOT
-    parted "$DISK" mkpart primary ext4 513MiB 100%
+    parted "$DISK" mkpart primary btrfs 1025MiB 100%
     parted "$DISK" name 2 ROOT
 elif [ $part_ans -eq 2 ]; then
     parted "$DISK" mklabel gpt
-    parted "$DISK" mkpart primary fat32 1MiB 513MiB
+    parted "$DISK" mkpart primary fat32 1MiB 1025MiB
     parted "$DISK" set 1 esp on
     parted "$DISK" name 1 BOOT
-    parted "$DISK" mkpart primary ext4 513MiB 50.5GiB
+    parted "$DISK" mkpart primary btrfs 1025MiB 51GiB
     parted "$DISK" name 2 ROOT
-    parted "$DISK" mkpart primary ext4 50.5GiB 100%
+    parted "$DISK" mkpart primary xfs 51GiB 100%
     parted "$DISK" name 3 HOME
 elif [ $part_ans -eq 3 ]; then
     parted "$DISK" mklabel gpt
-    parted "$DISK" mkpart primary fat32 1MiB 513MiB
+    parted "$DISK" mkpart primary fat32 1MiB 1025MiB
     parted "$DISK" set 1 esp on
     parted "$DISK" name 1 BOOT
-    parted "$DISK" mkpart primary linux-swap 513MiB 8.5GiB
+    parted "$DISK" mkpart primary linux-swap 1025MiB 9GiB
     parted "$DISK" name 2 SWAP
-    parted "$DISK" mkpart primary ext4 8.5GiB 58.5GiB
+    parted "$DISK" mkpart primary btrfs 9GiB 59GiB
     parted "$DISK" name 3 ROOT
-    parted "$DISK" mkpart primary ext4 58.5GiB 100%
+    parted "$DISK" mkpart primary xfs 59GiB 100%
     parted "$DISK" name 4 HOME
 else
     echo "invalid option chosen"
@@ -99,15 +100,43 @@ sleep 2
 # Formatting partitions
 echo "Formatting partitions"
 
+# If disk is NVMe
 if [[ "$DISK" =~ ^/dev/nvme ]]; then
-    # If disk is NVMe
-    mkfs.fat -F 32 "${DISK}p1"
-    mkfs.btrfs -f "${DISK}p2"
-    mkfs.xfs -f "${DISK}p3"
+        if [ $part_ans -eq 1 ]; then
+            mkfs.fat -F 32 -n BOOT "${DISK}p1"
+            mkfs.btrfs -f -L ROOT "${DISK}p2"
+        elif [ $part_ans -eq 2 ]; then
+            mkfs.fat -F 32 -n BOOT "${DISK}p1"
+            mkfs.btrfs -f -L ROOT "${DISK}p2"
+            mkfs.xfs -L HOME "${DISK}p3"
+        elif [ $part_ans -eq 3 ]; then
+            mkfs.fat -F 32 -n BOOT "${DISK}p1"
+            mkswap "${DISK}p2"
+            mkfs.btrfs -f -L ROOT "${DISK}p3"
+            mkfs.xfs -L HOME "${DISK}p4"
+        else
+            echo "Error: could not format the partitions"
+            exit 1
+fi
+
 else
     # If disk is SATA (e.g., /dev/sda)
-    mkfs.fat -F 32 "${DISK}1"
-    mkfs.ext4 "${DISK}2"
+    if [ $part_ans -eq 1 ]; then
+            mkfs.fat -F 32 -n BOOT "${DISK}1"
+            mkfs.btrfs -f -L ROOT "${DISK}2"
+        elif [ $part_ans -eq 2 ]; then
+            mkfs.fat -F 32 -n BOOT "${DISK}1"
+            mkfs.btrfs -f -L ROOT "${DISK}2"
+            mkfs.xfs -L HOME "${DISK}3"
+        elif [ $part_ans -eq 3 ]; then
+            mkfs.fat -F 32 -n BOOT "${DISK}1"
+            mkswap "${DISK}2"
+            mkfs.btrfs -f -L ROOT "${DISK}3"
+            mkfs.xfs -L HOME "${DISK}4"
+        else
+            echo "Error: could not format the partitions"
+            exit 1
+    fi
 fi
 echo "Disks formated"
 sleep 2
