@@ -209,7 +209,7 @@ sleep 2
 
 
 # Ranking mirrors
-reflector --country India --protocol https --latest 20 --sort rate --save /etc/pacman.d/mirrorlist
+reflector --country India --protocol https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist --verbose
 echo "Mirrors selected"
 sleep 2
 
