@@ -102,40 +102,39 @@ echo "Formatting partitions"
 
 # If disk is NVMe
 if [[ "$DISK" =~ ^/dev/nvme ]]; then
-        if [ $part_ans -eq 1 ]; then
-            mkfs.fat -F 32 -n BOOT "${DISK}p1"
-            mkfs.btrfs -f -L ROOT "${DISK}p2"
-        elif [ $part_ans -eq 2 ]; then
-            mkfs.fat -F 32 -n BOOT "${DISK}p1"
-            mkfs.btrfs -f -L ROOT "${DISK}p2"
-            mkfs.xfs -L HOME "${DISK}p3"
-        elif [ $part_ans -eq 3 ]; then
-            mkfs.fat -F 32 -n BOOT "${DISK}p1"
-            mkswap "${DISK}p2"
-            mkfs.btrfs -f -L ROOT "${DISK}p3"
-            mkfs.xfs -L HOME "${DISK}p4"
-        else
-            echo "Error: could not format the partitions"
-            exit 1
-fi
-
+    if [ $part_ans -eq 1 ]; then
+        mkfs.fat -F 32 -n BOOT "${DISK}p1"
+        mkfs.btrfs -f -L ROOT "${DISK}p2"
+    elif [ $part_ans -eq 2 ]; then
+        mkfs.fat -F 32 -n BOOT "${DISK}p1"
+        mkfs.btrfs -f -L ROOT "${DISK}p2"
+        mkfs.xfs -L HOME "${DISK}p3"
+    elif [ $part_ans -eq 3 ]; then
+        mkfs.fat -F 32 -n BOOT "${DISK}p1"
+        mkswap "${DISK}p2"
+        mkfs.btrfs -f -L ROOT "${DISK}p3"
+        mkfs.xfs -L HOME "${DISK}p4"
+    else
+        echo "Error: could not format the partitions"
+        exit 1
+    fi
 else
     # If disk is SATA (e.g., /dev/sda)
     if [ $part_ans -eq 1 ]; then
-            mkfs.fat -F 32 -n BOOT "${DISK}1"
-            mkfs.btrfs -f -L ROOT "${DISK}2"
-        elif [ $part_ans -eq 2 ]; then
-            mkfs.fat -F 32 -n BOOT "${DISK}1"
-            mkfs.btrfs -f -L ROOT "${DISK}2"
-            mkfs.xfs -L HOME "${DISK}3"
-        elif [ $part_ans -eq 3 ]; then
-            mkfs.fat -F 32 -n BOOT "${DISK}1"
-            mkswap "${DISK}2"
-            mkfs.btrfs -f -L ROOT "${DISK}3"
-            mkfs.xfs -L HOME "${DISK}4"
-        else
-            echo "Error: could not format the partitions"
-            exit 1
+        mkfs.fat -F 32 -n BOOT "${DISK}1"
+        mkfs.btrfs -f -L ROOT "${DISK}2"
+    elif [ $part_ans -eq 2 ]; then
+        mkfs.fat -F 32 -n BOOT "${DISK}1"
+        mkfs.btrfs -f -L ROOT "${DISK}2"
+        mkfs.xfs -L HOME "${DISK}3"
+    elif [ $part_ans -eq 3 ]; then
+        mkfs.fat -F 32 -n BOOT "${DISK}1"
+        mkswap "${DISK}2"
+        mkfs.btrfs -f -L ROOT "${DISK}3"
+        mkfs.xfs -L HOME "${DISK}4"
+    else
+        echo "Error: could not format the partitions"
+        exit 1
     fi
 fi
 echo "Disks formated"
@@ -145,16 +144,49 @@ sleep 2
 # Mounting partitions
 if [[ "$DISK" =~ ^/dev/nvme ]]; then
     # If disk is NVMe
-    mount "${DISK}p2" /mnt
-    mkdir -p /mnt/boot/efi
-    mount "${DISK}p1" /mnt/boot/efi
-    mkdir -p /mnt/home
-    mount "${DISK}p3" /mnt/home
+    if [ $part_ans -eq 1 ]; then
+        mkdir -p /mnt/boot
+        mount "${DISK}p2" /mnt
+        mount "${DISK}p1" /mnt/boot
+    elif [ $part_ans -eq 2 ]; then
+        mkdir -p /mnt/boot
+        mkdir -p /mnt/home
+        mount "${DISK}p2" /mnt
+        mount "${DISK}p1" /mnt/boot
+        mount "${DISK}p3" /mnt/home
+    elif [ $part_ans -eq 3 ]; then
+        mkdir -p /mnt/boot
+        mkdir -p /mnt/home
+        mount "${DISK}p3" /mnt
+        mount "${DISK}p1" /mnt/boot
+        mount "${DISK}p4" /mnt/home
+        swapon "${DISK}p2"
+    else
+        echo "Error: could not mount the partitions"
+        exit 1
+    fi
 else
-    # If disk is SATA (e.g., /dev/sda)
-    mount "${DISK}2" /mnt
-    mkdir -p /mnt/boot/efi
-    mount "${DISK}1" /mnt/boot/efi
+    if [ $part_ans -eq 1 ]; then
+        mkdir -p /mnt/boot
+        mount "${DISK}2" /mnt
+        mount "${DISK}1" /mnt/boot
+    elif [ $part_ans -eq 2 ]; then
+        mkdir -p /mnt/boot
+        mkdir -p /mnt/home
+        mount "${DISK}2" /mnt
+        mount "${DISK}1" /mnt/boot
+        mount "${DISK}3" /mnt/home
+    elif [ $part_ans -eq 3 ]; then
+        mkdir -p /mnt/boot
+        mkdir -p /mnt/home
+        mount "${DISK}3" /mnt
+        mount "${DISK}1" /mnt/boot
+        mount "${DISK}4" /mnt/home
+        swapon "${DISK}2"
+    else
+        echo "Error: could not mount the partitions"
+        exit 1
+    fi
 fi
 
 echo "Scanning for Windows EFI partitions..."
