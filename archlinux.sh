@@ -215,7 +215,7 @@ sleep 2
 
 
 # Installing packages
-pacstrap -K /mnt base base-devel linux-zen linux-firmware intel-ucode dosfstools e2fsprogs ntfs-3g xfsprogs btrfs-progs efibootmgr grub os-prober networkmanager sudo vim nano man-pages man-db texinfo tealdeer git
+pacstrap -K /mnt base linux-zen linux-firmware-intel linux-firmware-nvidia linux-firmware-realtek intel-ucode dosfstools ntfs-3g xfsprogs btrfs-progs efibootmgr grub os-prober networkmanager sudo neovim man-pages man-db base-devel git
 
 
 # Generate fstab file.
