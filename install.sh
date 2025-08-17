@@ -271,8 +271,8 @@ EDITOR='sed -i "s/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/"' visudo
 
 
 # GRUB installation
-grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=grub --removable --recheck
-grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=grub --recheck
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub --removable --recheck
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub --recheck
 
 sed -i '/#GRUB_DISABLE_OS_PROBER/s/^#//' "/etc/default/grub"
 
