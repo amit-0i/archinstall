@@ -26,7 +26,7 @@ if [ ! -d "/sys/firmware/efi" ]; then
 fi
 
 # Setting bigger font size
-setfont ter-132b
+setfont ter-120b
 
 
 # Checking available disks.
