@@ -134,21 +134,16 @@ sleep 2
 if [[ "$DISK" =~ ^/dev/nvme ]]; then
     # If disk is NVMe
     if [ $part_ans -eq 1 ]; then
-        mkdir -p /mnt/boot
         mount "${DISK}p2" /mnt
-        mount "${DISK}p1" /mnt/boot
+        mount "${DISK}p1" --mkdir /mnt/boot
     elif [ $part_ans -eq 2 ]; then
-        mkdir -p /mnt/boot
-        mkdir -p /mnt/home
         mount "${DISK}p2" /mnt
-        mount "${DISK}p1" /mnt/boot
-        mount "${DISK}p3" /mnt/home
+        mount "${DISK}p1" --mkdir /mnt/boot
+        mount "${DISK}p3" --mkdir /mnt/home
     elif [ $part_ans -eq 3 ]; then
-        mkdir -p /mnt/boot
-        mkdir -p /mnt/home
         mount "${DISK}p3" /mnt
-        mount "${DISK}p1" /mnt/boot
-        mount "${DISK}p4" /mnt/home
+        mount "${DISK}p1" --mkdir /mnt/boot
+        mount "${DISK}p4" --mkdir /mnt/home
         swapon "${DISK}p2"
     else
         echo "Error: could not mount the partitions"
@@ -156,21 +151,16 @@ if [[ "$DISK" =~ ^/dev/nvme ]]; then
     fi
 else
     if [ $part_ans -eq 1 ]; then
-        mkdir -p /mnt/boot
         mount "${DISK}2" /mnt
-        mount "${DISK}1" /mnt/boot
+        mount "${DISK}1" --mkdir /mnt/boot
     elif [ $part_ans -eq 2 ]; then
-        mkdir -p /mnt/boot
-        mkdir -p /mnt/home
         mount "${DISK}2" /mnt
-        mount "${DISK}1" /mnt/boot
-        mount "${DISK}3" /mnt/home
+        mount "${DISK}1" --mkdir /mnt/boot
+        mount "${DISK}3" --mkdir /mnt/home
     elif [ $part_ans -eq 3 ]; then
-        mkdir -p /mnt/boot
-        mkdir -p /mnt/home
         mount "${DISK}3" /mnt
-        mount "${DISK}1" /mnt/boot
-        mount "${DISK}4" /mnt/home
+        mount "${DISK}1" --mkdir /mnt/boot
+        mount "${DISK}4" --mkdir /mnt/home
         swapon "${DISK}2"
     else
         echo "Error: could not mount the partitions"
@@ -192,9 +182,8 @@ for part in /dev/nvme0n1p1 /dev/sda1 /dev/sda2 /dev/nvme0n1p2 /dev/sdb1; do
     fi
 done
 
-print_log -stat "Mount hard drive? (y/N)"
-    read -r answer
-    if [[ "$answer" == [Yy] ]]; then
+read -p "Mount hard drive? (y/N)" mnt_hard
+    if [[ "$mnt_hard" == [Yy] ]]; then
         mount /dev/sdb2 --mkdir /mnt/mnt/harddrive
     else
         echo "The system will not reboot"
