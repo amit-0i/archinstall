@@ -277,11 +277,16 @@ echo "Grub configured"
 echo "Exiting chroot..."
 sleep 2
 
-
-# Updating tealdeer
-tldr --update
 EOF
 
 umount -R /mnt
 
-echo "Installation complete. You can now reboot your system."
+print_log -stat "Do you want to reboot the system? (y/N)"
+    read -r answer
+
+    if [[ "$answer" == [Yy] ]]; then
+        echo "Rebooting system"
+        reboot
+    else
+        echo "The system will not reboot"
+    fi
