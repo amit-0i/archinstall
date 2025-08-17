@@ -186,12 +186,19 @@ for part in /dev/nvme0n1p1 /dev/sda1 /dev/sda2 /dev/nvme0n1p2 /dev/sdb1; do
         echo "Found Windows EFI partition at $WINDOWS_EFI"
         read -p "Do you want to mount it? y/n : " mnt_ans
         if [[ $mnt_ans =~ ^[yY]$ ]]; then
-            mkdir -p /mnt/boot/windows-efi
-            mount "$WINDOWS_EFI" /mnt/boot/windows-efi
+            mount "$WINDOWS_EFI" --mkdir /mnt/mnt/windows-efi
         fi
         break
     fi
 done
+
+print_log -stat "Mount hard drive? (y/N)"
+    read -r answer
+    if [[ "$answer" == [Yy] ]]; then
+        mount /dev/sdb2 --mkdir /mnt/mnt/harddrive
+    else
+        echo "The system will not reboot"
+    fi
 
 echo "Partitions mounted"
 sleep 2
