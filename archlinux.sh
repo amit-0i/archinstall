@@ -235,9 +235,10 @@ ln -sf /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
 hwclock --systohc
 
 sed -i '/en_US.UTF-8/s/^#//g' "/etc/locale.gen"
+sed -i '/en_IN.UTF-8/s/^#//g' "/etc/locale.gen"
 locale-gen
 
-echo "LANG=en_US.UTF-8" > /etc/locale.conf
+echo -e "LANG=en_US.UTF-8\nLC_TIME=en_IN.UTF-8\nLC_NUMERIC=en_IN.UTF-8" > /etc/locale.conf
 
 echo "Time and Locale configured"
 sleep 2
